@@ -126,6 +126,7 @@
 		</dependency>
 	</dependencies>
 
+	<!-- DO NOT REMOVE THIS - IT's FOR DEPLOYING JAR TO AWS -->
 	<build>
 		<finalName>doctorService</finalName>
 		<plugins>
@@ -153,6 +154,7 @@
 			</plugin>
 		</plugins>
 	</build>
+	<!-- DO NOT REMOVE THIS - IT's FOR DEPLOYING JAR TO AWS -->
 
 	<dependencyManagement>
 		<dependencies>
