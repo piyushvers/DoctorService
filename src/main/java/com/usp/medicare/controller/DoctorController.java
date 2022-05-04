@@ -1,16 +1,23 @@
 package com.usp.medicare.controller;
 
+import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.usp.medicare.dto.DoctorDetailsDto;
+import com.usp.medicare.dto.DoctorDto;
 import com.usp.medicare.service.DoctorService;
 
 /**
@@ -21,6 +28,7 @@ import com.usp.medicare.service.DoctorService;
  */
 @RestController
 @RequestMapping("/doctor")
+@CrossOrigin
 public class DoctorController {
 
 	@Autowired
@@ -34,8 +42,8 @@ public class DoctorController {
 	 * @return
 	 */
 	@GetMapping("/getdoctors")
-	public ResponseEntity<?> getDoctors() {
-		Map<String, String> doctoreList = doctorService.getDoctorList();
+	public ResponseEntity<List<DoctorDto>> getDoctors(@RequestParam(required = false) String searchStr) {
+		List<DoctorDto> doctoreList = doctorService.getDoctorList(searchStr);
 		return ResponseEntity.ok(doctoreList);
 	}
 
@@ -59,12 +67,18 @@ public class DoctorController {
 	public ResponseEntity<?> getDoctorsWithClinics() {
 		Map<String,Map<String,String>> responseMap = new HashMap<String,Map<String,String>>();
 		
-		Map<String, String> doctoreList = doctorService.getDoctorList();
+		//List<DoctorDto> doctoreList = doctorService.getDoctorList();
 		Map<String, String> clinicList = doctorService.getDoctorClinicsList();
 		
 		responseMap.put("clinicList", clinicList);
-		responseMap.put("doctorList", doctoreList);
+		//responseMap.put("doctorList", doctoreList);
 		return ResponseEntity.ok(responseMap);
+	}
+	
+	@GetMapping("/getDoctorDetailsById/{doctorId}")
+	public ResponseEntity<DoctorDetailsDto> getDoctorDetailsById(@PathVariable String doctorId) {
+		DoctorDetailsDto doctorDetail = doctorService.getDoctorDetails(new BigInteger(doctorId));
+		return ResponseEntity.ok(doctorDetail);
 	}
 
 }
