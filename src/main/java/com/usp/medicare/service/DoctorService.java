@@ -14,17 +14,20 @@ import org.springframework.stereotype.Service;
 import com.usp.medicare.dto.DoctorAmrDto;
 import com.usp.medicare.dto.DoctorDetailsDto;
 import com.usp.medicare.dto.DoctorDto;
+import com.usp.medicare.dto.DoctorEducationDto;
 import com.usp.medicare.dto.DoctorExpDto;
 import com.usp.medicare.dto.DoctorInfoDto;
 import com.usp.medicare.dto.DoctorServicesDto;
 import com.usp.medicare.dto.DoctorSpecDto;
 import com.usp.medicare.entity.Doctor;
+import com.usp.medicare.entity.DoctorEducation;
 import com.usp.medicare.entity.DoctorExperience;
 import com.usp.medicare.entity.DoctorInfo;
 import com.usp.medicare.entity.DoctorRewards;
 import com.usp.medicare.entity.DoctorServices;
 import com.usp.medicare.entity.DoctorSpeciality;
 import com.usp.medicare.repository.DoctorAMRRepository;
+import com.usp.medicare.repository.DoctorEducationRepository;
 import com.usp.medicare.repository.DoctorExpRepository;
 import com.usp.medicare.repository.DoctorInfoRepository;
 import com.usp.medicare.repository.DoctorRepository;
@@ -50,6 +53,8 @@ public class DoctorService {
 
 	@Autowired
 	private DoctorAMRRepository doctorAMRRepository;
+	@Autowired
+	private DoctorEducationRepository doctorEducationRepository;
 
 	public List<DoctorDto> getDoctorList(String searchStr) {
 		List<Doctor> doctorList = new ArrayList<>();
@@ -106,22 +111,27 @@ public class DoctorService {
 					: new ArrayList<>();
 
 			List<DoctorRewards> doctorRewards = doctorAMRRepository.findByDoctorId(doctorId);
-			
 			List<DoctorAmrDto> doctorRewardDtos = doctorRewards != null && !doctorRewards.isEmpty()
 					? ObjectMapperUtils.mapAll(doctorRewards, DoctorAmrDto.class)
 					: new ArrayList<>();
 
+			List<DoctorEducation> doctorEducation = doctorEducationRepository.findByDoctorId(doctorId);
+			List<DoctorEducationDto> doctorEducationDto = doctorEducation != null && !doctorEducation.isEmpty()
+					? ObjectMapperUtils.mapAll(doctorEducation, DoctorEducationDto.class)
+					: new ArrayList<>();
+
 			return DoctorDetailsDto.builder().doctorInfo(doctorInfodto).doctorExp(doctorExperienceDto)
+					.doctorEducation(doctorEducationDto)
 					.doctorServices(docServicesDtos.stream().filter(s -> s.getIsActive().equals('Y'))
 							.collect(Collectors.toList()))
 					.doctorSpec(doctorSpecDtos.stream().filter(s -> s.getIsActive().equals('Y'))
 							.collect(Collectors.toList()))
-					.doctorRewards(doctorRewardDtos.stream().filter(s -> s.getType().equals('A'))
-							.collect(Collectors.toList()))
-					.doctorMemberShip(doctorRewardDtos.stream().filter(s -> s.getType().equals('M'))
-							.collect(Collectors.toList()))
-					.doctorRegistration(doctorRewardDtos.stream().filter(s -> s.getType().equals('R'))
-							.collect(Collectors.toList()))
+					.doctorRewards(
+							doctorRewardDtos.stream().filter(s -> s.getType().equals('A')).collect(Collectors.toList()))
+					.doctorMemberShip(
+							doctorRewardDtos.stream().filter(s -> s.getType().equals('M')).collect(Collectors.toList()))
+					.doctorRegistration(
+							doctorRewardDtos.stream().filter(s -> s.getType().equals('R')).collect(Collectors.toList()))
 					.build();
 		}
 
