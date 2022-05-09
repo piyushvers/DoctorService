@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.usp.medicare.dto.DoctorDetailsDto;
-import com.usp.medicare.dto.DoctorDto;
+import com.usp.medicare.dto.DoctorSearchResponse;
 import com.usp.medicare.service.DoctorService;
 
 /**
@@ -40,10 +40,10 @@ public class DoctorController {
 	 * Method to get doctor list
 	 * 
 	 * @return
-	 */
+	 */ 
 	@GetMapping("/getdoctors")
-	public ResponseEntity<List<DoctorDto>> getDoctors(@RequestParam(required = false) String searchStr) {
-		List<DoctorDto> doctoreList = doctorService.getDoctorList(searchStr);
+	public ResponseEntity<List<DoctorSearchResponse>> getDoctors(@RequestParam(required = false) String searchStr) {
+		List<DoctorSearchResponse> doctoreList = doctorService.getDoctorList(searchStr);
 		return ResponseEntity.ok(doctoreList);
 	}
 

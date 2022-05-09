@@ -17,6 +17,7 @@ import com.usp.medicare.dto.DoctorDto;
 import com.usp.medicare.dto.DoctorEducationDto;
 import com.usp.medicare.dto.DoctorExpDto;
 import com.usp.medicare.dto.DoctorInfoDto;
+import com.usp.medicare.dto.DoctorSearchResponse;
 import com.usp.medicare.dto.DoctorServicesDto;
 import com.usp.medicare.dto.DoctorSpecDto;
 import com.usp.medicare.entity.Doctor;
@@ -56,9 +57,8 @@ public class DoctorService {
 	@Autowired
 	private DoctorEducationRepository doctorEducationRepository;
 
-	public List<DoctorDto> getDoctorList(String searchStr) {
+	public List<DoctorSearchResponse> getDoctorList(String searchStr) {
 		List<Doctor> doctorList = new ArrayList<>();
-
 		if (searchStr == null || searchStr.isEmpty()) {
 			doctorList = doctorRepository.findAll();
 			System.out.println(doctorList);
@@ -66,7 +66,21 @@ public class DoctorService {
 			doctorDtoList = doctorList != null && !doctorList.isEmpty()
 					? ObjectMapperUtils.mapAll(doctorList, DoctorDto.class)
 					: new ArrayList<>();
-			return doctorDtoList;
+
+			List<DoctorSearchResponse> doctorSearchResponseList = new ArrayList<DoctorSearchResponse>();
+			if (doctorDtoList != null && !doctorDtoList.isEmpty()) {
+				for (DoctorDto doctorDto : doctorDtoList) {
+					List<DoctorServices> doctorServices = doctorServiceRepository
+							.findByDoctorId(doctorDto.getDoctorId());
+					List<DoctorServicesDto> docServicesDtos = doctorServices != null && !doctorServices.isEmpty()
+							? ObjectMapperUtils.mapAll(doctorServices, DoctorServicesDto.class)
+							: new ArrayList<>();
+					doctorSearchResponseList.add(
+							DoctorSearchResponse.builder().doctor(doctorDto).doctorServices(docServicesDtos).build());
+
+				}
+			}
+			return doctorSearchResponseList;
 		} else {
 			doctorList = doctorRepository.getAllDoctorsBySearchCriteria(searchStr);
 			System.out.println(doctorList);
@@ -74,7 +88,20 @@ public class DoctorService {
 			doctorDtoList = doctorList != null && !doctorList.isEmpty()
 					? ObjectMapperUtils.mapAll(doctorList, DoctorDto.class)
 					: new ArrayList<>();
-			return doctorDtoList;
+			List<DoctorSearchResponse> doctorSearchResponseList = new ArrayList<DoctorSearchResponse>();
+			if (doctorDtoList != null && !doctorDtoList.isEmpty()) {
+				for (DoctorDto doctorDto : doctorDtoList) {
+					List<DoctorServices> doctorServices = doctorServiceRepository
+							.findByDoctorId(doctorDto.getDoctorId());
+					List<DoctorServicesDto> docServicesDtos = doctorServices != null && !doctorServices.isEmpty()
+							? ObjectMapperUtils.mapAll(doctorServices, DoctorServicesDto.class)
+							: new ArrayList<>();
+					doctorSearchResponseList.add(
+							DoctorSearchResponse.builder().doctor(doctorDto).doctorServices(docServicesDtos).build());
+
+				}
+			}
+			return doctorSearchResponseList;
 		}
 
 	}
@@ -93,6 +120,7 @@ public class DoctorService {
 		Optional<Doctor> optionalDoctor = doctorRepository.findById(doctorId);
 		if (optionalDoctor.isPresent()) {
 			System.out.println("--------------------" + optionalDoctor);
+			
 			DoctorInfo doctorInfo = doctorInfoRepository.findByDoctorId(doctorId);
 			DoctorInfoDto doctorInfodto = ObjectMapperUtils.map(doctorInfo, DoctorInfoDto.class);
 			List<DoctorExperience> doctorExperiences = doctorExpRepository.findByDoctorId(doctorId);
@@ -121,6 +149,7 @@ public class DoctorService {
 					: new ArrayList<>();
 
 			return DoctorDetailsDto.builder().doctorInfo(doctorInfodto).doctorExp(doctorExperienceDto)
+					.doctordetails(ObjectMapperUtils.map(optionalDoctor.get(), DoctorDto.class))
 					.doctorEducation(doctorEducationDto)
 					.doctorServices(docServicesDtos.stream().filter(s -> s.getIsActive().equals('Y'))
 							.collect(Collectors.toList()))
