@@ -166,4 +166,9 @@ public class DoctorService {
 
 		return null;
 	}
+
+	public List<String> getAllSpeciality() {
+		// TODO Auto-generated method stub
+		return doctorSpecRepository.findDistinctBySpecName();
+	}
 }

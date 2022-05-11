@@ -80,5 +80,11 @@ public class DoctorController {
 		DoctorDetailsDto doctorDetail = doctorService.getDoctorDetails(new BigInteger(doctorId));
 		return ResponseEntity.ok(doctorDetail);
 	}
+	
+	@GetMapping("/getAllSpeciality")
+	public ResponseEntity<List<String>> getAllSpeciality() {
+		List<String> doctorDetail = doctorService.getAllSpeciality();
+		return ResponseEntity.ok(doctorDetail);
+	}
 
 }
