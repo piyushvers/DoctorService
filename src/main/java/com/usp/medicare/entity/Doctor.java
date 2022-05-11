@@ -52,4 +52,10 @@ public class Doctor {
 	@Column(name="ADDRESS_FK")
 	private Integer addressId;	
 	
+	@Column(name="FEES")
+	private String fee;
+	
+	@Column(name="LOCATION")
+	private String location;
+	
 }
