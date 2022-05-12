@@ -18,11 +18,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class BeanConfig {
 
-	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		// Do any additional configuration here
-		return builder.build();
-	}
+//	@Bean
+//	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+//		// Do any additional configuration here
+//		return builder.build();
+//	}
 
 	@Bean
 	public Docket api() {
